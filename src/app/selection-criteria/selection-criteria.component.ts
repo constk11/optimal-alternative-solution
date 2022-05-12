@@ -31,7 +31,10 @@ export class SelectionCriteriaComponent implements OnInit {
     document.querySelectorAll('.criteria.active').forEach(criteria => {
       selectedCriterias.push(criteria.innerHTML.trim())
     })
-    if (!selectedCriterias.length) { return }
+    if (!selectedCriterias.length) {
+      alert('Необходимо выбрать хотя бы один критерий!')
+      return
+    }
     this.criteriasService.setCriterias(selectedCriterias)
     this.router.navigate(['/optimal-alternative'])
   }

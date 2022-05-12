@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 import { CriteriasService } from '../services/criterias.service';
 import { Criteria } from '../shared/interfaces';
 
@@ -23,9 +24,10 @@ export class OptimalAlternativeComponent implements OnInit {
 
   constructor(
     private readonly criteriasService: CriteriasService,
-    private readonly router: Router) {}
+    private readonly router: Router
+  ) {}
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.criterias = this.criteriasService.getSelectedCriterias();
     if (!this.criterias?.length) {
       this.router.navigate(['/']);
@@ -52,8 +54,12 @@ export class OptimalAlternativeComponent implements OnInit {
     this.riskCountArr = new Array(inputValue);
   }
 
-  public calc() {
+  public calc(): void {
     this.clearWins();
+    if (!this.validation()) {
+      alert('Некорректные данные!');
+      return;
+    }
 
     for (let i = 0; i < this.altCount; i++) {
       const values: number[] = [];
@@ -67,6 +73,27 @@ export class OptimalAlternativeComponent implements OnInit {
     this.determinateWinner();
   }
 
+  private validation(): boolean {
+    let isValid = true;
+    const values = document.querySelectorAll('table input');
+    const gurvicCoeff = document.querySelector(
+      '.gurvic-coeff input'
+    ) as HTMLInputElement;
+    values.forEach((v) => {
+      if (
+        (v as HTMLInputElement).value === '' ||
+        +(v as HTMLInputElement).value < 0 ||
+        (this.isGurvic &&
+          (gurvicCoeff?.value === '' ||
+            +gurvicCoeff?.value < 0 ||
+            +gurvicCoeff?.value > 1))
+      ) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  }
+
   private calcByCriterias(values: number[], rowIndex: number) {
     this.criterias.forEach((criteria) => {
       let criteriaValue;
@@ -74,7 +101,11 @@ export class OptimalAlternativeComponent implements OnInit {
         const gurvicCoeff = +(
           document.querySelector('.gurvic-coeff input') as HTMLInputElement
         ).value;
-        criteriaValue = this.criteriasService.calc(values, criteria.id, gurvicCoeff);
+        criteriaValue = this.criteriasService.calc(
+          values,
+          criteria.id,
+          gurvicCoeff
+        );
       } else {
         criteriaValue = this.criteriasService.calc(values, criteria.id);
       }
@@ -107,14 +138,16 @@ export class OptimalAlternativeComponent implements OnInit {
 
     for (let j = 0; j < this.altCount; j++) {
       if (document.querySelectorAll(`.alt${j} .win`).length === maxScore) {
-        document.querySelector(`.alt${j} td.alt textarea`)
+        document
+          .querySelector(`.alt${j} td.alt textarea`)
           ?.classList.add('win');
       }
     }
   }
 
   private clearWins() {
-    document.querySelectorAll('.win')
+    document
+      .querySelectorAll('.win')
       .forEach((elem) => elem.classList.remove('win'));
   }
 }
