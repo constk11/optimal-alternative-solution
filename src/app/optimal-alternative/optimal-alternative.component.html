@@ -1,0 +1,45 @@
+<div class="page">
+    <div class="parameters">
+        <div class="alternative-count">
+            <p>Укажите количество альтернатив</p>
+            <input type="text" [value]="altCount" (input)="setAltCount($event)">
+        </div>
+        <div class="risk-count">
+            <p>Укажите количество рисков (состояний среды)</p>
+            <input type="text" [value]="riskCount" (input)="setRiskCount($event)">
+        </div>
+        <div class="gurvic-coeff" *ngIf="isGurvic">
+            <p>Укажите коэффициент Гурвича</p>
+            <input type="text">
+        </div>
+    </div>
+
+    <table cellSpacing="0">
+        <thead>
+            <th></th>
+            
+            <th class="risk" *ngFor="let risk of riskCountArr; let i = index">         
+                <textarea>P{{ i + 1 }}</textarea>
+            </th>
+
+            <th *ngFor="let criteria of criterias">
+                {{criteria.name}}
+            </th>
+        </thead>
+        <tbody>
+            <tr *ngFor="let alt of altCountArr; let i = index" [class]="'alt' + i">
+                <td class="alt" >
+                    <textarea>A{{ i + 1 }}</textarea>
+                </td>
+
+                <td *ngFor="let risk of riskCountArr; let j = index" class="value" [class]="'value' + i + j">
+                    <input type="text">
+                </td>
+
+                <td *ngFor="let criteria of criterias; let k = index" class="criteria" [class]="criteria.id"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="btn" (click)="calc()">Вычислить</button>
+</div>

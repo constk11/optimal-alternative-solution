@@ -1,0 +1,9 @@
+<div class="page">
+    <h2>Выберите критерии</h2>
+    <div class="grid">
+        <div class="criteria" *ngFor="let criteria of criterias" [class]="criteria.id" (click)="selectCriteria($event)">
+            {{ criteria.name }}
+        </div>
+    </div>
+    <button class="btn" (click)="navigateToCalculating()">Вычислить</button>
+</div>
