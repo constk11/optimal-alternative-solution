@@ -26,6 +26,12 @@
         margin-top: 40px;
         // background-color: #fff;
 
+        caption {
+            color: var(--light-text-color);
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
         td, th {
             position: relative;
             border: 1px solid #000;
